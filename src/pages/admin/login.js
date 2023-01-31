@@ -31,6 +31,7 @@ const LoginAdmin = ()=> {
                }
            })
            const data = await res.data
+           console.log(data)
            if(data.status === 200) {
                await router.push('/admin/dashboard')
            } else {
@@ -38,7 +39,7 @@ const LoginAdmin = ()=> {
            }
        } catch(err) {
            toast({
-               title: e.message,
+               title: err.message,
                status:'error',
                position: 'top-right',
                isClosable: true,
