@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "doppler run next dev",
-    "build": "doppler run next build",
+    "build": "next build",
     "start": "doppler run next start",
-    "lint": "doppler run next lint"
+    "lint": "Snext lint"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
