@@ -1,19 +1,11 @@
 // /middleware.ts
 import { NextResponse } from "next/server";
-import { getIronSession } from "iron-session/edge";
+import {getCookie} from "cookies-next";
 
 export const middleware = async (req,res) => {
-    const session = await getIronSession(req, res, {
-        password: process.env.IRON,
-        cookieName: "sessions",
-        cookieOptions: {
-            secure: process.env.NODE_ENV === "production",
-        },
-    });
 
     // do anything with session here:
-    const { user } = session;
-
+    const token = getCookie('token-key-adm',{ req, res });
     // like mutate user:
     // user.something = someOtherThing;
     // or:
@@ -26,7 +18,7 @@ export const middleware = async (req,res) => {
 
 
     // demo:
-    if (user?.admin !== "true") {
+    if (!token) {
         // unauthorized to see pages inside admin/
         return NextResponse.redirect(new URL('/admin/login', req.url)) // redirect to /unauthorized page
     }
