@@ -6,6 +6,8 @@ import BodyLulus from "@/components/Body/BodyLulus";
 import QRLulus from "@/components/QrCode/QrCodeLulus";
 import BodyTidakLulus from "@/components/Body/BodyTidakLulus";
 import HeaderTidakLulus from "@/components/Header/TidakLulus";
+import axios from "axios";
+import {ENV} from "@/utility/const";
 
 export default function Result({datas,info}) {
     return (
@@ -55,18 +57,17 @@ export default function Result({datas,info}) {
 
 // This gets called on every request
 export async function getServerSideProps(context) {
-    const base = process.env.BASE_URL
     const { req } = context
     const { headers } = req
-    const student = await fetch( base + '/api/student',{
+    const student = await axios.get( ENV.base + '/api/student',{
         credentials:'include',
         headers:{
             cookie:headers.cookie
         }
     })
-    const info = await fetch(base + '/api/info')
-    const data2 = await info.json()
-    const {data} = await student.json()
+    const info = await axios.get(ENV.base + '/api/info')
+    const data2 = await info.data
+    const {data} = await student.data
     return {
         props: {
             datas: data,

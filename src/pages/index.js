@@ -14,6 +14,8 @@ import {
 import {useState} from "react";
 import ModalErrorAPI from "@/components/Modals/Error";
 import {useRouter} from "next/router";
+import axios from 'axios'
+import {ENV} from "@/utility/const";
 
 
 export default function Home({data}) {
@@ -35,8 +37,10 @@ export default function Home({data}) {
 
         // Perform submit logic, such as sending data to a server
        try{
-           const response = await fetch('/api/student/login', {
-               method: 'POST',
+           const response = await axios.post('/api/student/login',{
+               nisn: nisn,
+               date: birth
+           }, {
                headers: {
                    'Content-Type': 'application/json'
                },
@@ -45,7 +49,7 @@ export default function Home({data}) {
                    date: birth
                })
            })
-           const data = await response.json()
+           const data = await response.data
            if (data.status !== 200) throw new Error('Siswa Tidak Ditemukan')
            await router.push('/result')
        } catch (e){
@@ -112,14 +116,13 @@ export default function Home({data}) {
 
 // This gets called on every request
 export async function getServerSideProps() {
-    const base = process.env.BASE_URL
+
     let data;
     // Fetch data from external API
-    const res = await fetch( base + '/api/info')
-
+    const res = await axios.get(`${ENV.base}/api/info`)
 
     if (res.status === 200) {
-        data = await res.json()
+        data = res.data;
     } else {
         data = null
     }

@@ -8,13 +8,15 @@ import {
     TableContainer, Tbody, Td,
     Th,
     Thead,
-    Tr, useControllableState, useDisclosure, useToast
+    Tr, useDisclosure, useToast
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {deleteCookie, getCookies} from "cookies-next";
 import Head from "next/head";
 import ImportUserModal from "@/components/Modals/ImportUser";
+import axios from "axios";
+import {ENV} from "@/utility/const";
 
 const Students = ({data,setUsername,users}) => {
     const [filteredData, setFilteredData] = useState(users)
@@ -33,21 +35,20 @@ const Students = ({data,setUsername,users}) => {
     }
 
     const updateList = async () => {
-        await fetch(`/api/admin/users`, {
+        await axios.get(`${ENV.base}/api/admin/users`, {
             credentials: 'same-origin',
             headers: {
                 cookie: getCookies()
             }
         }).then(async res =>{
-            const {data} = await res.json()
+            const {data} = await res.data
             setFilteredData(data)
         })
     }
 
     const deleteNisn = async () => {
         try {
-            await fetch(`/api/admin/students/${selected}`, {
-                method: 'DELETE',
+            await axios.delete(`${ENV.base}/api/admin/students/${selected}`, {
                 headers: {
                     cookie: getCookies()
                 }
@@ -157,25 +158,24 @@ const Students = ({data,setUsername,users}) => {
 }
 
 export async function getServerSideProps(context) {
-    const base = process.env.BASE_URL
     const { req,res } = context
     const { headers } = req
     // fetch data
     try {
-        const users = await fetch(`${base}/api/user`, {
+        const users = await axios.get(`${ENV.base}/api/user`, {
             credentials: 'same-origin',
             headers:{
                 cookie: headers.cookie
             }
         });
-        const datas = await fetch(`${base}/api/admin/users`, {
+        const datas = await axios.get(`${ENV.base}/api/admin/users`, {
             credentials: 'same-origin',
             headers:{
                 cookie: headers.cookie
             }
         });
-        const user = await users.json()
-        const {data} = await datas.json()
+        const user = await users.data
+        const {data} = await datas.data
         if (user.status === 401) {
             deleteCookie('token-key', { req, res });
             return {

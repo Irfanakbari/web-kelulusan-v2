@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import {useState} from "react";
 import {useRouter} from "next/router";
+import axios from "axios";
+import {ENV} from "@/utility/const";
 
 const LoginAdmin = ()=> {
     const [isLoading, setIsLoading] = useState(false)
@@ -20,17 +22,15 @@ const LoginAdmin = ()=> {
         e.preventDefault()
         setIsLoading(true)
        try {
-           const res = await fetch('/api/auth/login',{
-               method: 'POST',
+           const res = await axios.post(ENV.base+'/api/auth/login',{
+               username : e.target.username.value,
+               password : e.target.password.value
+           },{
                headers: {
                    'Content-Type': 'application/json'
-               },
-               body: JSON.stringify({
-                   username : e.target.username.value,
-                   password : e.target.password.value
-               })
+               }
            })
-           const data = await res.json()
+           const data = await res.data
            if(data.status === 200) {
                await router.push('/admin/dashboard')
            } else {

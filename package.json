@@ -6,7 +6,7 @@
     "dev": "doppler run next dev",
     "build": "next build",
     "start": "doppler run next start",
-    "lint": "Snext lint"
+    "lint": "next lint"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
@@ -16,6 +16,7 @@
     "@fontsource/lato": "^4.5.10",
     "@next/font": "13.1.6",
     "@p4r4d0x0/captcha-generator": "^1.7.1",
+    "axios": "^1.2.6",
     "cookies-next": "^2.1.1",
     "docxtemplater": "^3.33.0",
     "eslint": "8.33.0",

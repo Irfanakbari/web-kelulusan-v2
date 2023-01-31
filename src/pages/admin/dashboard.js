@@ -16,6 +16,8 @@ import {MdPeople} from "react-icons/md";
 import {AiFillEye} from "react-icons/ai";
 import {deleteCookie} from "cookies-next";
 import Head from "next/head";
+import axios from "axios";
+import {ENV} from "@/utility/const";
 
 const Dashboard = ({data,setUsername,siswa})=>{
     useEffect(()=>{
@@ -99,26 +101,25 @@ const Dashboard = ({data,setUsername,siswa})=>{
 }
 
 export async function getServerSideProps(context) {
-    const base = process.env.BASE_URL
     const { req,res } = context
     const { headers } = req
     // fetch data
     try {
-        const users = await fetch(`${base}/api/user`, {
+        const users = await axios.get(`${ENV.base}/api/user`, {
             credentials: 'same-origin',
             headers:{
                 cookie: headers.cookie
             }
         });
 
-        const dashboard = await fetch(`${base}/api/admin/dashboard`, {
+        const dashboard = await axios.get(`${ENV.base}/api/admin/dashboard`, {
             credentials: 'same-origin',
             headers:{
                 cookie: headers.cookie
             }
         });
-        const user = await users.json()
-        const {data} = await dashboard.json()
+        const user = await users.data
+        const {data} = await dashboard.data
         if (user.status === 401) {
             deleteCookie('token-key-adm', { req, res });
             return {

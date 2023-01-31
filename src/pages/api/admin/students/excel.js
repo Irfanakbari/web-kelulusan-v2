@@ -13,8 +13,8 @@ export default async function handler(req,res) {
         case 'POST':
             try {
                 // get token
-                // const token = getCookie('token-key-adm',{ req, res });
-                // const verify = decodeToken(token);
+                // const.js token = getCookie('token-key-adm',{ req, res });
+                // const.js verify = decodeToken(token);
                 //
                 // // check if token is valid
                 // if (verify == null) return error401(res)
