@@ -3,17 +3,38 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "doppler run next dev",
+    "build": "doppler run next build",
+    "start": "doppler run next start",
+    "lint": "doppler run next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.17",
+    "@chakra-ui/react": "^2.4.9",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fontsource/lato": "^4.5.10",
     "@next/font": "13.1.6",
+    "@p4r4d0x0/captcha-generator": "^1.7.1",
+    "cookies-next": "^2.1.1",
+    "docxtemplater": "^3.33.0",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "framer-motion": "^8.5.4",
+    "iron-session": "^6.3.1",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.0.1",
     "next": "13.1.6",
+    "pizzip": "^3.1.4",
+    "query-string-hash": "^1.0.6",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-icons": "^4.7.1",
+    "react-qr-code": "^2.0.11",
+    "react-table": "^7.8.0",
+    "salted-md5": "^4.0.3",
+    "sequelize": "^6.28.0",
+    "xlsx": "^0.18.5"
   }
 }
