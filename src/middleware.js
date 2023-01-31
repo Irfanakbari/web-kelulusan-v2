@@ -6,15 +6,7 @@ export const middleware = async (req,res) => {
 
     // do anything with session here:
     const token = getCookie('token-key-adm',{ req, res });
-    // like mutate user:
-    // user.something = someOtherThing;
-    // or:
-    // session.user = someoneElse;
 
-    // uncomment next line to commit changes:
-    // await session.save();
-    // or maybe you want to destroy session:
-    // await session.destroy();
 
 
     // demo:
