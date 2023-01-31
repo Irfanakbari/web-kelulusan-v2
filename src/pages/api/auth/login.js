@@ -39,6 +39,6 @@ export default async function handler(req,res){
             )
             break
         default:
-            return error405()
+            return error405(res)
     }
 }
