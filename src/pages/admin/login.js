@@ -10,7 +10,6 @@ import {
 import {useState} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
-import {ENV} from "@/utility/const";
 
 const LoginAdmin = ()=> {
     const [isLoading, setIsLoading] = useState(false)
@@ -22,7 +21,7 @@ const LoginAdmin = ()=> {
         e.preventDefault()
         setIsLoading(true)
        try {
-           const res = await axios.post(ENV.base+'/api/auth/login',{
+           const res = await axios.post('/api/auth/login',{
                username : e.target.username.value,
                password : e.target.password.value
            },{
