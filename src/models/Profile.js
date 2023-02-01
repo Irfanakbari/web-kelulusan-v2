@@ -27,6 +27,10 @@ const Profile = connection.define('Profile', {
     isOpen: {
         type : DataTypes.INTEGER,
         allowNull : true
+    },
+    npsn :{
+        type : DataTypes.STRING,
+        allowNull : true
     }
 },{
     tableName: 'Profile',

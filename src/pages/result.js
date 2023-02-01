@@ -35,7 +35,7 @@ export default function Result({datas,info}) {
                         </Box>
                         {
                             datas.status === 1 &&
-                            <QRLulus/>
+                            <QRLulus nisn={datas.nisn} />
                         }
                     </Flex>
                     {

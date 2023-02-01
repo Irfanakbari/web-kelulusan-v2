@@ -3,16 +3,15 @@ import {
     AlertDialogBody, AlertDialogCloseButton, AlertDialogContent,
     AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,
     Box, Button,
-    Heading, IconButton, Stack,
-    Table,
+    Heading, IconButton, Table,
     TableContainer, Tbody, Td,
     Th,
     Thead,
     Tr, useDisclosure, useToast
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
-import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
-import {deleteCookie, getCookies} from "cookies-next";
+import {DeleteIcon} from "@chakra-ui/icons";
+import {deleteCookie} from "cookies-next";
 import Head from "next/head";
 import ImportUserModal from "@/components/Modals/ImportUser";
 import axios from "axios";
@@ -35,11 +34,8 @@ const Students = ({data,setUsername,users}) => {
     }
 
     const updateList = async () => {
-        await axios.get(`${ENV.base}/api/admin/users`, {
-            credentials: 'same-origin',
-            headers: {
-                cookie: getCookies()
-            }
+        await axios.get(`/api/admin/users`, {
+            withCredentials: true
         }).then(async res =>{
             const {data} = await res.data
             setFilteredData(data)
@@ -48,10 +44,8 @@ const Students = ({data,setUsername,users}) => {
 
     const deleteNisn = async () => {
         try {
-            await axios.delete(`${ENV.base}/api/admin/students/${selected}`, {
-                headers: {
-                    cookie: getCookies()
-                }
+            await axios.delete(`/api/admin/users/${selected}`, {
+                withCredentials: true
             }).then(async response => {
                 if (response.status === 200) {
                     await updateList()
@@ -100,25 +94,21 @@ const Students = ({data,setUsername,users}) => {
                                 {
                                     filteredData.map((item,index)=>(
                                         <Tr key={index}>
-                                            <Td>{item.username}</Td>                                               <Td>{item.name}</Td>
+                                            <Td>{item.username}</Td>
+                                            <Td>{item.name}</Td>
                                             <Td>{item.createdAt}</Td>
                                             <Td>{item.role}</Td>
                                             <Td>
-                                                <Stack direction={'row'} spacing={5} justifyContent={'center'}>
-                                                    <IconButton
-                                                        variant='solid'
-                                                        colorScheme='red'
-                                                        onClick={()=>deleteHandler(item.username)}
-                                                        aria-label='Delete Siswa'
-                                                        icon={<DeleteIcon />}
-                                                    />
-                                                    <IconButton
-                                                        variant='solid'
-                                                        colorScheme='blue'
-                                                        aria-label='Delete Siswa'
-                                                        icon={<EditIcon />}
-                                                    />
-                                                </Stack>
+                                                {
+                                                    item.role !== 'super' &&
+                                                        <IconButton
+                                                            variant='solid'
+                                                            colorScheme='red'
+                                                            onClick={()=>deleteHandler(item.username)}
+                                                            aria-label='Delete Siswa'
+                                                            icon={<DeleteIcon />}
+                                                        />
+                                                }
                                             </Td>
                                         </Tr>
                                     ))

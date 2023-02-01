@@ -30,7 +30,6 @@ const LoginAdmin = ()=> {
                }
            })
            const data = await res.data
-           console.log(data)
            if(data.status === 200) {
                await router.push('/admin/dashboard')
            } else {

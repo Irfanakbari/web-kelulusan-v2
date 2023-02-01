@@ -2,7 +2,7 @@ import {
     Button,
     FormControl,
     FormLabel,
-    Input, Modal,
+    Input, Link, Modal,
     ModalBody,
     ModalCloseButton, ModalContent,
     ModalFooter,
@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import {useRef, useState} from "react";
 import {DownloadIcon} from "@chakra-ui/icons";
+import axios from "axios";
 
 const ImportExcelModal = ({onUpdate}) => {
     const { onOpen, onClose, isOpen } = useDisclosure()
@@ -29,16 +30,13 @@ const ImportExcelModal = ({onUpdate}) => {
         formData.append('file', file);
 
         try {
-            const res = await fetch('/api/admin/students/excel', {
-                method: 'POST',
-                body: formData
+            const res = await axios.post('/api/admin/students/excel', formData,{
+                withCredentials:true,
             })
-
-            if (!res.ok) {
+            if (!res.status === 200) {
                 throw new Error('Failed to upload file');
-            } else {
-                onUpdate()
             }
+            await onUpdate()
             toast({
                 title: "Import Sukses",
                 status:'success',
@@ -80,8 +78,8 @@ const ImportExcelModal = ({onUpdate}) => {
                                 <FormLabel>File Excel</FormLabel>
                                 <Input onChange={handleFileChange} name={'excel'} type={'file'} ref={initialRef} placeholder='First name' />
                             </FormControl>
+                            <Link mt={5} target={'_blank'} href={'/Format.xlsx'}>Download Template</Link>
                         </ModalBody>
-
                         <ModalFooter>
                             <Button type={'submit'} colorScheme='blue' mr={3}>
                                 Import

@@ -6,6 +6,8 @@ import Docxtemplater from "docxtemplater";
 import fs from "fs";
 import path from "path";
 import stream from "stream";
+import {getCookie} from "cookies-next";
+import {decodeToken} from "@/utility/token";
 
 
 const content = fs.readFileSync(
@@ -19,16 +21,18 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             try {
+                // Verify JWT token
+                const token = getCookie('token-key',{ req, res });
+                const {nisn} = decodeToken(token);
+
                 const doc = new Docxtemplater(zip, {
                     paragraphLoop: true,
                     linebreaks: true,
                 });
-                const queryParams = req.query.key
                 const profile = await Profile.findByPk(1)
                 const datas = await Student.findOne({
                     where:{
-                        nisn : queryParams.nisn,
-                        tgl_lahir : queryParams.tgl_lahir
+                        nisn : nisn
                     }
                 },{
                     attributes: {
@@ -54,15 +58,15 @@ export default async function handler(req, res) {
                 const bufferStream = new stream.PassThrough();
 
                 bufferStream.end(buf);
+                const filename = `${nisn}-skl.docx`
                 res.setHeader(
                     'Content-Disposition',
-                    'attachment; filename="sample.docx"'
+                    `attachment; filename=${filename}`
                 );
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
                 bufferStream.pipe(res);
             } catch (e){
-                console.log(e.message)
-                return error500(res)
+                return error500(res,e.message)
             }
             break
         default:

@@ -11,6 +11,7 @@ import {
 import {useRef} from "react";
 import {DownloadIcon} from "@chakra-ui/icons";
 import {getCookies} from "cookies-next";
+import axios from "axios";
 
 const ImportUserModal = ({onUpdate}) => {
     const { onOpen, onClose, isOpen } = useDisclosure()
@@ -20,19 +21,13 @@ const ImportUserModal = ({onUpdate}) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const data = {
             username : event.target.username.value,
             name : event.target.name.value,
             password : event.target.password.value
         }
-
-        console.log(data)
-
         try {
-            const res = await fetch('/api/admin/users', {
-                method: 'POST',
-                body: JSON.stringify(data),
+            const res = await axios.post('/api/admin/users', data,{
                 headers: {
                     'Content-Type': 'application/json',
                     cookie: getCookies()

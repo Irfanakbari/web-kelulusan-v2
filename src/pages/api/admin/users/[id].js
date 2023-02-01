@@ -1,13 +1,15 @@
+import {getCookie} from "cookies-next";
 import {decodeToken} from "@/utility/token";
 import {error401, error405, error500} from "@/utility/errorhandler";
-import {getCookie} from "cookies-next";
+import Student from "@/models/Student";
+import {Sequelize} from "sequelize";
 import User from "@/models/User";
-import {hashPassword} from "@/utility/hash";
-
-export default async function handler(req,res){
-    switch (req.method) {
-        case 'GET':
+export default async function handler(req,res) {
+    switch (req.method){
+        case 'DELETE':
             try {
+                const { id } = req.query
+
                 // get token
                 const token = getCookie('token-key-adm',{ req, res });
                 const verify = decodeToken(token);
@@ -16,37 +18,24 @@ export default async function handler(req,res){
                 if (verify == null) return error401(res)
 
                 // count total students
-                const users = await User.findAll()
-
-                const formattedUsers = users.map(user => {
-                    const date = new Date(user.dataValues.createdAt);
-                    return {
-                        ...user.dataValues,
-                        createdAt: date.toLocaleDateString("en-US", {
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric"
-                        })
-                    };
-                });
-
+                await User.destroy({
+                    where:{
+                        username : id
+                    },
+                })
                 // send response
                 res.status(200).json({
                     status:200,
-                    data:formattedUsers
+                    message: "Deleted Success"
                 })
             } catch (err) {
                 error500(res,err.message)
             }
             break
-        case 'POST':
-            const data = {
-                username : req.body.username,
-                name : req.body.name,
-                password : hashPassword(req.body.password),
-                role: 'admin'
-            }
+        case 'GET':
             try {
+                const { id } = req.query
+
                 // get token
                 const token = getCookie('token-key-adm',{ req, res });
                 const verify = decodeToken(token);
@@ -55,14 +44,21 @@ export default async function handler(req,res){
                 if (verify == null) return error401(res)
 
                 // count total students
-                const users = await User.create(data)
+                const students = await Student.findAll({
+                    where: {
+                        [Sequelize.Op.or]: [
+                            { nisn: id },
+                            { nisn: { [Sequelize.Op.like]: `%${id}%` } }
+                        ]
+                    },
+                    limit: 10
+                });
                 // send response
                 res.status(200).json({
                     status:200,
-                    data:users.dataValues
+                    data : students
                 })
             } catch (err) {
-                console.log(err.message)
                 error500(res,err.message)
             }
             break

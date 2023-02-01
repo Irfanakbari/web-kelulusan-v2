@@ -9,7 +9,7 @@ import {
     Text,
     WrapItem
 } from "@chakra-ui/react";
-import {MdOutlineDashboard,MdOutlinePeople,MdOutlinePerson,MdOutlineInfo,MdOutlineSettingsInputComposite} from "react-icons/md";
+import {MdOutlineDashboard,MdOutlinePeople,MdOutlinePerson,MdOutlineSettingsInputComposite} from "react-icons/md";
 import {useRouter} from "next/router";
 import Link from "next/link";
 
@@ -37,15 +37,9 @@ const DrawerAdmin = ({onClose,placement,isOpen,username})=>{
         },
         {
             type: "link",
-            label: "Information",
-            icon: MdOutlineInfo,
-            path: '/siswa'
-        },
-        {
-            type: "link",
             label: "Pengaturan",
             icon: MdOutlineSettingsInputComposite,
-            path: '/settings'
+            path: '/admin/settings'
         }
     ]
     return (

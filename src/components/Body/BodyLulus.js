@@ -1,22 +1,23 @@
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import {useState} from "react";
+import axios from "axios";
 
 
-const BodyLulus = ({data,profile})=>{
+const BodyLulus = ({data})=>{
     const [isLoading, setLoading] = useState(false)
    async function handlerSKL() {
         setLoading(true)
        try {
-           const queryString = Object.entries(data)
-               .map(([key, value]) => `${key}=${value}`)
-               .join("&");
-           const response = await fetch('/api/students/skl?key=' + queryString)
-           const blob = await response.blob()
+           const response = await axios.get('/api/student/skl',{
+               withCredentials : true,
+               responseType: 'blob',
+           })
+           const blob = new Blob([response.data], { type: 'vnd.openxmlformats-officedocument.wordprocessingml.document' });
            const url = window.URL.createObjectURL(blob);
            const a = document.createElement('a');
            a.style.display = 'none';
            a.href = url;
-           a.download = 'sample.docx';
+           a.download = `skl-${data.nisn}.docx`
            document.body.appendChild(a);
            a.click();
            window.URL.revokeObjectURL(url);
@@ -34,8 +35,8 @@ const BodyLulus = ({data,profile})=>{
                     <Text color={'#fff'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'1.1rem'}>{data.tgl_lahir ?? '-'}</Text>
                 </Box>
                 <Box mb={8}>
-                    <Text color={'#88ccf0'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'0.9rem'}>Asal Sekolah</Text>
-                    <Text color={'#fff'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'1.1rem'}>{profile.nama_sekolah ?? '-'}</Text>
+                    <Text color={'#88ccf0'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'0.9rem'}>Kelas / Jurusan</Text>
+                    <Text color={'#fff'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'1.1rem'}>{data.kelas ?? '-'} / {data.jurusan ?? '-'}</Text>
                 </Box>
             </Box>
             <Box w={['100%','100%','25%']} pr={8}>

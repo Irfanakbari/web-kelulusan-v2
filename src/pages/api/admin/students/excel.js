@@ -1,8 +1,10 @@
-import {error405, error500} from "@/utility/errorhandler";
+import {error401, error405, error500} from "@/utility/errorhandler";
 import Student from "@/models/Student";
 import multer from 'multer';
 import sequelize from "sequelize"
 import xlsx from 'xlsx';
+import {getCookie} from "cookies-next";
+import {decodeToken} from "@/utility/token";
 
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage});
@@ -13,11 +15,11 @@ export default async function handler(req,res) {
         case 'POST':
             try {
                 // get token
-                // const.js token = getCookie('token-key-adm',{ req, res });
-                // const.js verify = decodeToken(token);
+                const token = getCookie('token-key-adm',{ req, res });
+                const verify = decodeToken(token);
                 //
                 // // check if token is valid
-                // if (verify == null) return error401(res)
+                if (verify == null) return error401(res)
 
                 upload.single('file')(req, res, async (error) => {
                     if (error) {

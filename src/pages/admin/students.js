@@ -1,29 +1,53 @@
 import {
     AlertDialog,
-    AlertDialogBody, AlertDialogCloseButton, AlertDialogContent,
-    AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,
-    Box, Button,
+    AlertDialogBody,
+    AlertDialogCloseButton,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Box,
+    Button,
     Flex,
-    Heading, IconButton, Input,
+    FormControl,
+    FormLabel,
+    Heading,
+    IconButton,
+    Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay, Select,
     Stack,
     Table,
-    TableContainer, Tbody, Td,
+    TableContainer,
+    Tbody,
+    Td,
     Text,
     Th,
     Thead,
-    Tr, useControllableState, useDisclosure, useToast
+    Tr,
+    useControllableState,
+    useDisclosure,
+    useToast
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
-import {deleteCookie, getCookies} from "cookies-next";
+import {deleteCookie} from "cookies-next";
 import Head from "next/head";
 import ImportExcelModal from "@/components/Modals/ImportExcel";
 import axios from "axios";
 import {ENV} from "@/utility/const";
+import ToastService from "@/components/Toast";
 
 const Students = ({data,setUsername,students}) => {
     const [filteredData, setFilteredData] = useState(students)
     const [value, setValue] = useControllableState({ defaultValue: 1 })
+    const [selectedRow, setSelectedRow] = useState({});
+    const [isEditOpen, setIsEditOpen] = useState(false);
     const [keyword, setKeyword] = useState()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [selected, setSelected] = useState()
@@ -39,27 +63,41 @@ const Students = ({data,setUsername,students}) => {
         onOpen()
     }
 
+    const handleEdit = (row) => {
+        setSelectedRow(row);
+        setIsEditOpen(true);
+    };
+
+    const handleChange = (event) => {
+        setSelectedRow({ ...selectedRow, [event.target.name]: event.target.value });
+    };
+
+    const handleSubmitEdit= async (e) => {
+        e.preventDefault()
+        await axios.post(`/api/admin/students/${selectedRow.nisn}`, selectedRow,{
+            withCredentials:true
+        }).then(async () => {
+            await updateList()
+            ToastService('success',"Siswa Berhasil Diedit",toast)
+            setIsEditOpen(false)
+        }).catch()
+    }
+
     const searchData = async () => {
         if (keyword === '') {
             setFilteredData(students)
             return
         }
-        await axios.get(`${ENV.base}/api/admin/students/${keyword}`, {
-            credentials: 'same-origin',
-            headers: {
-                cookie: getCookies()
-            }
+        await axios.get(`/api/admin/students/${keyword}`, {
+            withCredentials:true
         }).then(async response => {
             const result = await response.data
             setFilteredData(result.data)
         })
     }
     const updateList = async () => {
-        await axios.get(`${ENV.base}/api/admin/students`, {
-            credentials: 'same-origin',
-            headers: {
-                cookie: getCookies()
-            }
+        await axios.get(`/api/admin/students`, {
+            withCredentials:true
         }).then(async res =>{
             const {data} = await res.data
             setFilteredData(data)
@@ -68,28 +106,16 @@ const Students = ({data,setUsername,students}) => {
 
     const deleteNisn = async () => {
         try {
-            await axios.delete(ENV.base+`/api/admin/students/${selected}`, {
-                headers: {
-                    cookie: getCookies()
-                }
+            await axios.delete(`/api/admin/students/${selected}`, {
+                withCredentials:true
             }).then(async response => {
                 if (response.status === 200) {
                         await updateList()
-                        toast({
-                            title: "Data Berhasil Dihapus",
-                            status:'success',
-                            position: 'top-right',
-                            isClosable: true,
-                        })
+                        ToastService('success',"Siswa Berhasil Dihapus",toast)
                 }
             })
         } catch (e) {
-            toast({
-                title: e.message,
-                status:'error',
-                position: 'top-right',
-                isClosable: true,
-            })
+            ToastService('error',e.message,toast)
         } finally {
             onClose()
         }
@@ -145,6 +171,7 @@ const Students = ({data,setUsername,students}) => {
                                                             <IconButton
                                                                 variant='solid'
                                                                 colorScheme='blue'
+                                                                onClick={()=>handleEdit(item)}
                                                                 aria-label='Delete Siswa'
                                                                 icon={<EditIcon />}
                                                             />
@@ -156,6 +183,66 @@ const Students = ({data,setUsername,students}) => {
                                 </Tbody>
                             </Table>
                         </TableContainer>
+                        <Modal
+                            isOpen={isEditOpen}
+                            isCentered
+                            onClose={()=>setIsEditOpen(false)}
+                        >
+                            <ModalOverlay />
+                            <ModalContent>
+                                <form onSubmit={handleSubmitEdit}>
+                                    <ModalHeader>Edit</ModalHeader>
+                                    <ModalCloseButton />
+                                    <ModalBody pb={6}>
+                                        <FormControl>
+                                            <FormLabel>NISN</FormLabel>
+                                            <Input name={'nisn'} type={'text'} value={selectedRow.nisn} placeholder='Username' isDisabled={true} />
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Nama</FormLabel>
+                                            <Input onChange={handleChange} name={'name'} type={'text'} value={selectedRow.name}/>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Email</FormLabel>
+                                            <Input onChange={handleChange} name={'email'} type={'text'} value={selectedRow.email}/>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Kelas</FormLabel>
+                                            <Input onChange={handleChange} name={'kelas'} type={'text'} value={selectedRow.kelas}/>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Jurusan</FormLabel>
+                                            <Input onChange={handleChange} name={'jurusan'} type={'text'} value={selectedRow.jurusan}/>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Status</FormLabel>
+                                            <Select name={'status'} value={selectedRow.status} onChange={handleChange} placeholder='Select option'>
+                                                <option value={0}>Tidak Lulus</option>
+                                                <option value={1}>Lulus</option>
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Kabupaten</FormLabel>
+                                            <Input onChange={handleChange} name={'kabupaten'} type={'text'} value={selectedRow.kabupaten} />
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormLabel>Provinsi</FormLabel>
+                                            <Input onChange={handleChange} name={'provinsi'} type={'text'} value={selectedRow.provinsi} />
+                                        </FormControl>
+                                        <FormControl>
+                                            <Input hidden={true} isDisabled={true} onChange={handleChange} name={'tgl_lahir'} type={'text'} value={selectedRow.tgl_lahir} />
+                                        </FormControl>
+                                    </ModalBody>
+
+                                    <ModalFooter>
+                                        <Button type={'submit'} colorScheme='blue' mr={3}>
+                                            Simpan
+                                        </Button>
+                                        <Button onClick={() => setIsEditOpen(false)}>Cancel</Button>
+                                    </ModalFooter>
+                                </form>
+                            </ModalContent>
+                        </Modal>
                         <AlertDialog
                             motionPreset='slideInBottom'
                             leastDestructiveRef={cancelAlertRef}
