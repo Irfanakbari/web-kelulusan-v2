@@ -25,6 +25,30 @@ export default async function handler(req,res){
                 error500(res,err.message)
             }
             break
+        case 'POST':
+            try {
+                // get token
+                const token = getCookie('token-key-adm',{ req, res });
+                const verify = decodeToken(token);
+
+                // check if token is valid
+                if (verify == null) return error401(res)
+
+                // count total students
+                const settings = await Profile.update(req.body, {
+                    where: {
+                        id: 1
+                    }
+                });
+                // send response
+                res.status(200).json({
+                    status:200,
+                    message : "Sukses"
+                })
+            } catch (err) {
+                error500(res,err.message)
+            }
+            break
         default:
             error405(res)
     }

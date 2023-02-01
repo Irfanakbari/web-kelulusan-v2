@@ -1,5 +1,5 @@
 import {
-    Box, FormControl, FormLabel,
+    Box, Button, FormControl, FormLabel,
     Heading, Input, Select, useDisclosure, useToast
 } from "@chakra-ui/react";
 import {useEffect, useState} from "react";
@@ -7,18 +7,47 @@ import {deleteCookie} from "cookies-next";
 import Head from "next/head";
 import axios from "axios";
 import {ENV} from "@/utility/const";
+import ToastService from "@/components/Toast";
 
 const Students = ({data,setUsername,settings}) => {
-    const [selected, setSelected] = useState()
-    useToast();
+    const [selected, setSelected] = useState(settings)
+    const [logo, setLogo] = useState(null);
+    const toast = useToast()
+
     useEffect(()=>{
         setUsername(data.username)
-        setSelected(settings)
-    }, [setUsername, data.username, settings])
+        // setSelected(settings)
+    }, [setUsername, data.username])
 
     const handleChange = (event) => {
-        setSelected({ ...selected, [event.target.name]: event.target.value });
+        setSelected({ ...selected, [event.target.name]: event.target.value});
     };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        axios.post('/api/admin/settings', selected, {
+            withCredentials: true
+        }).then(r =>{
+            ToastService('success',"Update Berhasil",toast)
+        }).catch(e =>{
+            ToastService('error',e.message,toast)
+        })
+    }
+
+    const handleUploadChange= (event) => {
+        setLogo(event.target.files[0])
+    }
+    const handleUpload = (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append('logo', logo);
+        formData.append('skl', logo);
+        axios.post('/api/admin/settings/upload', formData, {
+            withCredentials: true
+        }).then(r =>{
+            console.log(r.data)
+        })
+    }
 
     // const updateList = async () => {
     //     await axios.get(`/api/admin/users`, {
@@ -39,34 +68,46 @@ const Students = ({data,setUsername,settings}) => {
             <Box bg={'#614BFE'} pb={10} minH={'100vh'}>
                 <Heading fontFamily={'Lato'} p={10} color={'white'}>Pengaturan Web</Heading>
                 <Box bg={'white'} mx={10} p={10} borderRadius={6}>
-                    <form>
-                        <FormControl mb={8}>
+                    <form onSubmit={handleSubmit}>
+                        <FormControl isRequired={true} mb={8}>
                             <FormLabel>NPSN</FormLabel>
-                            <Input onChange={handleChange} name={'name'} type={'text'} value={settings.npsn}/>
+                            <Input onChange={handleChange} name={'npsn'} type={'text'} value={selected.npsn}/>
                         </FormControl>
-                        <FormControl mb={8}>
+                        <FormControl isRequired={true} mb={8}>
                             <FormLabel>Nama Sekolah</FormLabel>
-                            <Input onChange={handleChange} name={'email'} type={'text'} value={settings.nama_sekolah}/>
+                            <Input onChange={handleChange} name={'nama_sekolah'} type={'text'} value={selected.nama_sekolah}/>
                         </FormControl>
-                        <FormControl mb={8}>
+                        <FormControl isRequired={true} mb={8}>
                             <FormLabel>Judul Website</FormLabel>
-                            <Input onChange={handleChange} name={'kelas'} type={'text'} value={settings.judul_web}/>
+                            <Input onChange={handleChange} name={'judul_web'} type={'text'} value={selected.judul_web}/>
                         </FormControl>
-                        <FormControl mb={8}>
+                        <FormControl isRequired={true} mb={8}>
                             <FormLabel>Text Tombol Login Siswa</FormLabel>
-                            <Input onChange={handleChange} name={'jurusan'} type={'text'} value={settings.button_label}/>
+                            <Input onChange={handleChange} name={'button_label'} type={'text'} value={selected.button_label}/>
                         </FormControl>
                         <FormControl mb={8}>
                             <FormLabel>Status Buka</FormLabel>
-                            <Select name={'status'} value={settings.isOpen} onChange={handleChange} placeholder='Select option'>
+                            <Select name={'isOpen'} value={selected.isOpen} onChange={handleChange} placeholder='Select option'>
                                 <option value={0}>Tutup</option>
                                 <option value={1}>Buka</option>
                             </Select>
                         </FormControl>
-                        <FormControl mb={8}>
+                        <FormControl isRequired={true} mb={8}>
                             <FormLabel>Kepsek</FormLabel>
-                            <Input onChange={handleChange} name={'kabupaten'} type={'text'} value={settings.kepsek} />
+                            <Input onChange={handleChange} name={'kepsek'} type={'text'} value={selected.kepsek} />
                         </FormControl>
+                        <Button type={'submit'} mb={8} px={10} colorScheme={'green'}>Simpan</Button>
+                    </form>
+                    <form onSubmit={handleUpload} encType={'multipart/form-data'}>
+                        <FormControl mb={8}>
+                            <FormLabel>Logo</FormLabel>
+                            <Input onChange={handleUploadChange} name={'logo'} type={'file'} />
+                        </FormControl>
+                        <FormControl mb={8}>
+                            <FormLabel>Template SKL</FormLabel>
+                            <Input name={'skl'} type={'file'} />
+                        </FormControl>
+                        <Button px={10} colorScheme={'blue'} type={'submit'}>Upload</Button>
                     </form>
                 </Box>
             </Box>

@@ -38,7 +38,6 @@ export default async function handler(req,res){
                     data:formattedUsers
                 })
             } catch (err) {
-                console.log(err.message)
                 error500(res,err.message)
             }
             break

@@ -18,7 +18,7 @@ import axios from 'axios'
 import {ENV} from "@/utility/const";
 
 
-export default function Home({data}) {
+export default function Home({data,isClosed}) {
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
     const toast = useToast()
@@ -71,7 +71,7 @@ export default function Home({data}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
         {
-            !data &&
+            !data || isClosed &&
             <ModalErrorAPI />
         }
           <ScaleFade initialScale={0.5} in={true}>
@@ -128,5 +128,5 @@ export async function getServerSideProps() {
     }
 
     // Pass data to the page via props
-    return { props: { data: data?.data } }
+    return { props: { data: data?.data, isClosed : data?.data.isOpen === 0 } }
 }
