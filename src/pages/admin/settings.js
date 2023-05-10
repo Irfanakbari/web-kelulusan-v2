@@ -1,6 +1,6 @@
 import {
     Box, Button, FormControl, FormLabel,
-    Heading, Input, Select, useDisclosure, useToast
+    Heading, Input, Select, useToast
 } from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {deleteCookie} from "cookies-next";
@@ -12,6 +12,7 @@ import ToastService from "@/components/Toast";
 const Students = ({data,setUsername,settings}) => {
     const [selected, setSelected] = useState(settings)
     const [logo, setLogo] = useState(null);
+    const [skl, setSkl] = useState(null);
     const toast = useToast()
 
     useEffect(()=>{
@@ -27,7 +28,7 @@ const Students = ({data,setUsername,settings}) => {
         event.preventDefault();
         axios.post('/api/admin/settings', selected, {
             withCredentials: true
-        }).then(r =>{
+        }).then(() =>{
             ToastService('success',"Update Berhasil",toast)
         }).catch(e =>{
             ToastService('error',e.message,toast)
@@ -37,15 +38,21 @@ const Students = ({data,setUsername,settings}) => {
     const handleUploadChange= (event) => {
         setLogo(event.target.files[0])
     }
+    const handleUploadChange2= (event) => {
+        setSkl(event.target.files[1])
+    }
     const handleUpload = (event) => {
         event.preventDefault();
         const formData = new FormData();
         formData.append('logo', logo);
-        formData.append('skl', logo);
+        formData.append('skl', skl);
         axios.post('/api/admin/settings/upload', formData, {
-            withCredentials: true
+            withCredentials: true,
+            headers:{
+                'content-type': 'multipart/form-data'
+            }
         }).then(r =>{
-            console.log(r.data)
+            ToastService('success',"Update Berhasil",toast)
         })
     }
 
@@ -105,7 +112,7 @@ const Students = ({data,setUsername,settings}) => {
                         </FormControl>
                         <FormControl mb={8}>
                             <FormLabel>Template SKL</FormLabel>
-                            <Input name={'skl'} type={'file'} />
+                            <Input onChange={handleUploadChange2} name={'skl'} type={'file'} />
                         </FormControl>
                         <Button px={10} colorScheme={'blue'} type={'submit'}>Upload</Button>
                     </form>

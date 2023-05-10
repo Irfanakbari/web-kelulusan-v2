@@ -9,7 +9,7 @@ const BodyTidakLulus = ()=> {
                     <Text color={'#fff'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'1.1rem'}>18/10/2002</Text>
                 </Box>
                 <Box mb={8}>
-                    <Text color={'#88ccf0'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'0.9rem'}>Asal Sekolah</Text>
+                    <Text color={'#88ccf0'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'0.9rem'}>Sekolah</Text>
                     <Text color={'#fff'} fontFamily={'Lato'} fontWeight={'900'} mb={1} fontSize={'1.1rem'}>SMAN 1 PADANG TUALANG</Text>
                 </Box>
             </Box>

@@ -10,14 +10,12 @@ import {
 } from "@chakra-ui/react";
 import {useRef} from "react";
 import {DownloadIcon} from "@chakra-ui/icons";
-import {getCookies} from "cookies-next";
 import axios from "axios";
 
 const ImportUserModal = ({onUpdate}) => {
     const { onOpen, onClose, isOpen } = useDisclosure()
     const initialRef = useRef(null)
     const toast = useToast()
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,18 +25,9 @@ const ImportUserModal = ({onUpdate}) => {
             password : event.target.password.value
         }
         try {
-            const res = await axios.post('/api/admin/users', data,{
-                headers: {
-                    'Content-Type': 'application/json',
-                    cookie: getCookies()
-                }
+            await axios.post(`/api/admin/users`, data,{
+               withCredentials : true,
             })
-
-            if (!res.ok) {
-                throw new Error('Failed to save');
-            } else {
-                onUpdate()
-            }
             toast({
                 title: "Sukses",
                 status:'success',
@@ -55,6 +44,7 @@ const ImportUserModal = ({onUpdate}) => {
             })
         } finally {
             onClose()
+            onUpdate()
         }
 
     };

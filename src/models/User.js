@@ -25,7 +25,7 @@ const User = connection.define('User', {
         allowNull : true
     }
 },{
-    tableName: 'Users',
+    tableName: 'User',
     updatedAt: false,
     createdAt : 'createdAt'
 })

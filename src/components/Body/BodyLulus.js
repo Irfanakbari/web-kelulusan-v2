@@ -51,8 +51,8 @@ const BodyLulus = ({data})=>{
             </Box>
             <Box w={['100%','100%','50%']} bg={'white'} >
                 <Box p={5}>
-                    <Text color={'#2d2d2d'} fontFamily={'Lato'} fontWeight={'700'} fontSize={'1.2rem'}>Silahkan Lakukan Pendaftaran Ulang</Text>
-                    <Text color={'#2d2d2d'} fontFamily={'Lato'} fontWeight={'300'} mb={2} fontSize={'0.9rem'}>Informasi pendaftaran ulang di PTN/Politeknik Negeri dapat dilihat pada link berikut:</Text>
+                    <Text color={'#2d2d2d'} fontFamily={'Lato'} fontWeight={'700'} fontSize={'1.2rem'}>Silahkan Download SKL</Text>
+                    <Text color={'#2d2d2d'} fontFamily={'Lato'} fontWeight={'300'} mb={2} fontSize={'0.9rem'}>SKL dapat di download pada link berikut atau datang ke sekolah:</Text>
                     <Button
                         onClick={handlerSKL} fontWeight={'900'} fontFamily={'Lato'} color={'#008acf'} fontSize={'1.2rem'}
                         isLoading={isLoading}

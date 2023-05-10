@@ -85,7 +85,7 @@ export default function Home({data,isClosed}) {
                   <FormControl>
                       <FormLabel fontFamily={'Lato'} fontWeight={'900'} mb={2} fontSize={'0.9rem'} color={'#88ccf0'}>NISN</FormLabel>
                       <Input name={'nisn'} color={'white'} focusBorderColor={'#999'} size='lg' border={'none'} borderRadius={'5px'} bg={'rgba(250,250,250,0.2)'} fontSize={['0.8rem','1rem','1.2rem']} fontWeight={'700'} type='number' py={'18px'} px={'18px'} placeholder={'Nomor Induk Siswa Nasional'} />
-                      <FormHelperText mb={8}>Well never share your NISN.</FormHelperText>
+                      <FormHelperText mb={8}>We will never share your NISN.</FormHelperText>
                       <FormLabel fontFamily={'Lato'} fontWeight={'900'} mb={2} fontSize={'0.9rem'} color={'#88ccf0'}>Tanggal Lahir</FormLabel>
                       <Flex flexDirection={'row'} alignItems={'center'} mb={5}>
                           <Input name={'date'} textAlign={'center'} maxW={'110px'} color={'white'} focusBorderColor={'#999'} size='lg' border={'none'} borderRadius={'5px'} bg={'rgba(250,250,250,0.2)'} fontSize={['0.8rem','1rem','1.2rem']} fontWeight={'700'} type='number' py={'18px'} px={'18px'} placeholder={'Tanggal'} />

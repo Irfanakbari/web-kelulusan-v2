@@ -4,17 +4,20 @@ import {getCookie} from "cookies-next";
 import {decodeToken} from "@/utility/token";
 import path from "path";
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './public/data/uploads/')
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${file.fieldname}-${Date.now()}${ext}`);
-    },
-})
 
-const upload = multer({ storage : storage})
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: './public/img',
+        filename: (req, file, cb) => cb(null, "main-logo" + path.extname(file.originalname)),
+    }),
+});
+
+// const upload2 = multer({
+//     storage: multer.diskStorage({
+//         destination: './public/skl',
+//         filename: (req, file, cb) => cb(null, "skl" + path.extname(file.originalname)),
+//     }),
+// });
 
 
 export default async function handler(req,res) {
@@ -28,11 +31,16 @@ export default async function handler(req,res) {
                 // // check if token is valid
                 if (verify == null) return error401(res)
 
-                upload.single('logo')(req, res, async (error) => {
+                await upload.any('logo')(req, res, async (error) => {
                     if (error) {
                         res.status(500).end();
                     }
-                    console.log(req.file)
+                });
+
+                await upload.any('skl')(req, res, async (error) => {
+                    if (error) {
+                        res.status(500).end();
+                    }
                 });
                 // send response
                 res.status(200).json({

@@ -30,7 +30,6 @@ import {
     Th,
     Thead,
     Tr,
-    useControllableState,
     useDisclosure,
     useToast
 } from "@chakra-ui/react";
@@ -43,9 +42,9 @@ import axios from "axios";
 import {ENV} from "@/utility/const";
 import ToastService from "@/components/Toast";
 
-const Students = ({data,setUsername,students}) => {
+const Students = ({data,setUsername,students, pagination}) => {
     const [filteredData, setFilteredData] = useState(students)
-    const [value, setValue] = useControllableState({ defaultValue: 1 })
+    const [value, setValue] = useState(1)
     const [selectedRow, setSelectedRow] = useState({});
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [keyword, setKeyword] = useState()
@@ -54,9 +53,11 @@ const Students = ({data,setUsername,students}) => {
     const cancelAlertRef = useRef()
     const toast = useToast()
 
+
     useEffect(()=>{
         setUsername(data.username)
-    })
+        setValue(pagination.current)
+    }, [setUsername, data.username, pagination])
 
     const deleteHandler = (nisn)=>{
         setSelected(nisn)
@@ -118,6 +119,21 @@ const Students = ({data,setUsername,students}) => {
             ToastService('error',e.message,toast)
         } finally {
             onClose()
+        }
+    }
+
+    const paginate = async (pag) => {
+        try {
+            const students = await axios.get(`/api/admin/students?page=${pag}`, {
+                credentials: 'same-origin',
+            });
+            const {data} = await students.data
+            setFilteredData(data)
+            if (pag <= pagination.max){
+                setValue(pag)
+            }
+        } catch (e){
+            ToastService('error',e.message,toast)
         }
     }
 
@@ -269,11 +285,15 @@ const Students = ({data,setUsername,students}) => {
                             </AlertDialogContent>
                         </AlertDialog>
                         <Box mt={5}>
-                            <Button onClick={() => setValue(value - 1)}>-</Button>
+                            <Button onClick={
+                                ()=> paginate(value-1)
+                            }>-</Button>
                             <Box as='span' w='200px' mx='24px'>
                                 {value}
                             </Box>
-                            <Button onClick={() => setValue(value + 1)}>+</Button>
+                            <Button disabled={(value+1) === parseInt(pagination.max)} onClick={
+                                ()=>paginate(value+1)
+                            }>+</Button>
                         </Box>
                     </Box>
                 </Box>
@@ -299,7 +319,7 @@ export async function getServerSideProps(context) {
             }
         });
         const user = await users.data
-        const {data} = await students.data
+        const {data, pagination} = await students.data
         if (user.status === 401) {
             deleteCookie('token-key', { req, res });
             return {
@@ -312,7 +332,8 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 data : user.data,
-                students : data
+                students : data,
+                pagination: pagination
             },
         }
     } catch(err) {

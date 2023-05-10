@@ -54,7 +54,7 @@ export default async function handler(req,res) {
                 }
 
                 // count total students
-                const students = await Student.update(data,{
+                await Student.update(data,{
                     where: {
                         nisn : id
                     }

@@ -11,7 +11,7 @@ import {decodeToken} from "@/utility/token";
 
 
 const content = fs.readFileSync(
-    path.resolve("public/skl.docx"),
+    path.resolve("public/skl/skl.docx"),
     "binary"
 );
 const zip = new PizZip(content);

@@ -51,7 +51,7 @@ const Student = connection.define('Student', {
         allowNull : true
     }
 },{
-    tableName: 'Students',
+    tableName: 'Student',
     updatedAt: false,
     createdAt : false
 })

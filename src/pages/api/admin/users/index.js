@@ -12,7 +12,6 @@ export default async function handler(req,res){
                 const token = getCookie('token-key-adm',{ req, res });
                 const verify = decodeToken(token);
 
-                console.log(token)
 
                 // check if token is valid
                 if (verify == null) return error401(res)
@@ -42,13 +41,14 @@ export default async function handler(req,res){
             }
             break
         case 'POST':
-            const data = {
-                username : req.body.username,
-                name : req.body.name,
-                password : hashPassword(req.body.password),
-                role: 'admin'
-            }
+
             try {
+                const data = {
+                    username : req.body.username,
+                    name : req.body.name,
+                    password : hashPassword(req.body.password),
+                    role: 'admin'
+                }
                 // get token
                 const token = getCookie('token-key-adm',{ req, res });
                 const verify = decodeToken(token);
@@ -64,7 +64,6 @@ export default async function handler(req,res){
                     data:users.dataValues
                 })
             } catch (err) {
-                console.log(err.message)
                 error500(res,err.message)
             }
             break
